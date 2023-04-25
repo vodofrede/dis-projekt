@@ -14,4 +14,6 @@ For at installere requirements og køre appen:
 - Stock exchange / crypto
 - Twitter
 - Webshop
-- 
+- Musik/Spil ratings
+- Gambling/Betting
+- Statistik i esport spil

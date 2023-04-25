@@ -1,0 +1,6 @@
+# temporary files
+.venv
+**/__pycache__
+
+# secrets
+.env

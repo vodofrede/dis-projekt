@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if test -d ".venv/linux"; then
+if test -d ".venv"; then
     # source venv
-    source ./.venv/linux/bin/activate
+    source ./.venv/bin/activate
 else
     echo "setting up environment..."
 
@@ -13,10 +13,10 @@ else
     fi
 
     # create venv
-    python3 -m venv .venv/linux
+    python3 -m venv .venv
 
     # source venv
-    source ./.venv/linux/bin/activate
+    source ./.venv/bin/activate
 
     # install requirements
     pip install -r requirements.txt

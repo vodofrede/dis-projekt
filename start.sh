@@ -19,8 +19,12 @@ else
     source ./.venv/bin/activate
 
     # install requirements
+    python -m pip install --upgrade pip
     pip install -r requirements.txt
 fi
 
+# init/upgrade db
+flask --app src/app.py db upgrade
+
 # run app
-flask --app src/app.py --debug run
+flask --app src/app.py run --debug --extra-files assets/

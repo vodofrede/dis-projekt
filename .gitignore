@@ -1,6 +1,7 @@
 # temporary files
-.venv
+**/.venv
 **/__pycache__
+**/*.db
 
 # secrets
-.env
+**/.env

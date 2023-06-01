@@ -17,8 +17,5 @@ pip install -r requirements.txt
 :: source venv
 call .\.venv\Scripts\activate.bat
 
-:: upgrade db
-flask --app src\app.py db upgrade
-
 :: run app
 flask --app src\app.py run --debug --extra-files assets/ 

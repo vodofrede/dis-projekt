@@ -23,8 +23,5 @@ else
     pip install -r requirements.txt
 fi
 
-# init/upgrade db
-flask --app src/app.py db upgrade
-
 # run app
 flask --app src/app.py run --debug --extra-files assets/

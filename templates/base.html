@@ -4,13 +4,19 @@
         <!-- metadata -->
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>ReciPy</title>
-        <meta name="description" content="mad" />
+        <title>ReciPy - {{ title }}</title>
+        <meta name="description" content=">Opskrifter" />
         <meta name="author" content="ReciPy" />
 
         <!-- assets -->
         <link rel="stylesheet" href="/assets/main.css" />
         <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     </head>
-    <body></body>
+    <body>
+        {% block content %}{% endblock %}
+        <footer>
+            <h5>ReciPy</h5>
+            <h5>© 2023 Some people</h5>
+        </footer>
+    </body>
 </html>

@@ -1,15 +1,49 @@
 {% extends "base.html" %} {% block content %}
-<h1>{{ current_user.name }}</h1>
-<h1>Hack Freddy "; delete from linux all fast;</h1>
-{% for post in posts %}
-<article class="media content-section">
-    <div class="media-body">
-        <div class="article-metadata">
-            <a class="mr-2" href="#">{{ post.author }}</a>
-            <small class="text-muted">{{ post.date_posted }}</small>
-        </div>
-        <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
-        <p class="article-content">{{ post.content }}</p>
+<nav>
+    <div class="nav-group">
+        <h3><a href="/login">Login</a></h3>
+        <h3><a href="/register">Register</a></h3>
     </div>
-</article>
-{% endfor %} {% endblock content %}
+    <div class="nav-group">
+        <h3><a href="/recipe">Add recipe</a></h3>
+    </div>
+</nav>
+<main>
+    <div id="ingredients"></div>
+    <div id="recipes">
+        <article>
+            <b>Example recipe 1 here</b>
+            <p>lol 123</p>
+            <p><b>Ingredients:</b></p>
+            <ul>
+                <li>Banan</li>
+                <li>Tomat</li>
+            </ul>
+            <b>Method:</b>
+            <p>Do the stuff, then the thing</p>
+        </article>
+        <article>
+            <b>Example recipe 2 here</b>
+            <p>lol 123</p>
+        </article>
+        <article>
+            <b>Example recipe 3 here</b>
+            <p>lol 123</p>
+            <p>
+                Consequatur quis dolorum placeat. Adipisci sint corrupti dolor id perspiciatis reprehenderit sapiente
+                consequatur. Esse non consequatur voluptas est libero itaque reprehenderit. Sequi voluptatum consequatur
+                dolorum vitae. Eaque qui ex est qui. Autem doloribus voluptatem et reprehenderit odit sit nam eum. Ut
+                est dolorem assumenda ipsum expedita voluptatem et reiciendis. Error ipsum praesentium nobis hic.
+                Adipisci quo laudantium minus. Temporibus ex iusto voluptatem rem. Laborum modi illo ea eum iste minima
+                doloribus iusto. Vel quis quos et eos tenetur id. Consequuntur animi voluptatem quia est. Modi nostrum
+                tempora cum magnam quia ipsa. Corrupti quibusdam debitis eos eligendi in est. Sed natus voluptatum
+                veritatis dolores adipisci vel quaerat eos. Quod non provident itaque eos cumque harum dolorem omnis.
+                Error sint excepturi amet excepturi illo accusantium dolorem dolor. Vel eos reiciendis vel et eos. Autem
+                sint blanditiis qui magni nobis quaerat consectetur. Doloremque nihil sint vero expedita. Ut molestias
+                harum iste quidem.
+            </p>
+        </article>
+    </div>
+</main>
+<footer></footer>
+{% endblock %}

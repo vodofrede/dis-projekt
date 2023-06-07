@@ -10,25 +10,72 @@ class Model():
 
 class Recipe(Model):
     # recipe: 
-    # id, name, category, views, votes, cuisine, **ingredients**, time, difficulty
+    # id, name, category, cuisine, **ingredients**, time, difficulty
 
-    def __init__(self):
+    def __init__(self, recipe):
+        self.id = recipe[0]
+        self.name = recipe[1]
+        self.category = recipe[2]
+        self.cuisine = recipe[3]
+        self.ingredients = recipe[4]
+
         super.__init__()    
 
-    # get 'n' recipes by category
+    # get all recipes
     @staticmethod
-    def by_category(amount):
-        pass
+    def selectAllRecipes():
+        cur = con.cursor()
+        sql = """
+        SELECT * FROM Recipe
+        """
+        cur.execute(sql)
+        con.commit()
+        cur.close()
 
     # get 'n' recipes in database
     @staticmethod
-    def n_recipes(amount):
-        pass
+    def selectNRecipes(amount, fromId):
+        cur = con.cursor()
+        sql = """
+        SELECT * FROM Recipe where id > %s order by id limit %s
+        """
+        cur.execute(sql, (fromId, amount))
+        con.commit()
+        cur.close()
+
+    # get recipe by id
+    @staticmethod
+    def getRecipeById(id):
+        cur = con.cursor()
+        sql = """
+        SELECT * FROM Recipe where id = %s
+        """
+        cur.execute(sql, (id))
+        con.commit()
+        cur.close()
+
+    # get recipe by id
+    @staticmethod
+    def addRecipe(name, category, cuisine, ingredients):
+        cur = con.cursor()
+        sql = """
+        INSERT INTO Recipe(name, category, cuisine, ingredients) VALUES (%s, %s, %s, %s)
+        """
+        cur.execute(sql, (name, category, cuisine, ingredients))
+        con.commit()
+        cur.close()
 
 class Ingredient(Model):
     # ingredient: id, name, category
-    pass
+    def __init__(self, ingredient):
+        self.id = ingredient[0]
+        self.name = ingredient[1]
+        self.category = ingredient[2]
 
 class User(Model):
-    # user: id, user_name, favorite_recipes
-    pass
+    # user: id, user_name, favorite_recipes, password
+    def __init__(self, user):
+        self.id = user[0]
+        self.user_name = user[1]
+        self.favorite_recipes = user[2]
+        self.password = user[3]

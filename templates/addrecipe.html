@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% block content %}
+<nav>
+    <div class="nav-group">
+        {% if user.id is defined %}
+        <h3 style="font-family: monospace">Logged in as: {{ user.id }}</h3>
+        <h3><a href="/logout">Logout</a></h3>
+        {% else %}
+        <h3><a href="/login">Login</a></h3>
+        <h3><a href="/register">Register</a></h3>
+        {% endif %}
+    </div>
+    <div class="nav-group">
+        <h1><a href="/">ReciPy</a></h1>
+    </div>
+    <div class="nav-group"></div>
+</nav>
+<main class="center">
+    <div id="add-recipe">
+        <h3>Add a new recipe to the database</h3>
+        <form id="#addrecipe-form" action="addrecipe" method="POST">
+            <div>
+                <label for="name">Name:</label>
+                <input id="name" type="text" name="name" placeholder="add name" />
+            </div>
+            <div>
+                <label for="category">Category:</label>
+                <input id="category" type="text" name="category" placeholder="add category" />
+            </div>
+            <div>
+                <label for="cuisine">Cuisine:</label>
+                <input id="cuisine" type="text" name="cuisine" placeholder="add cuisine" />
+            </div>
+            <div>
+                <label for="ingredients">Ingredients:</label>
+                <label for="ingredients">(Hint: use a semicolon `;` separated list)</label>
+                <input id="ingredients" type="text" name="ingredients" placeholder="add ingredients here" />
+            </div>
+            <p>Description:</p>
+            <textarea id="description" rows="5" cols="50" name="description"></textarea>
+            <div>
+                <p>Method:</p>
+                <textarea id="method" rows="5" cols="50" name="method"></textarea>
+            </div>
+            <input id="submit" type="submit" />
+        </form>
+    </div>
+</main>
+{% endblock %}

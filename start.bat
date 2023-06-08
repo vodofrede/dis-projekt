@@ -3,6 +3,7 @@
 if exist .venv\NUL goto start 
 
 :: create venv
+echo creating venv...
 python -m venv .venv
 
 :: source venv
@@ -18,4 +19,4 @@ pip install -r requirements.txt
 call .\.venv\Scripts\activate.bat
 
 :: run app
-flask --app src\app.py run --debug --extra-files assets/ 
+flask --app src\app.py run --debug --extra-files assets/:templates/ 

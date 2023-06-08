@@ -23,6 +23,7 @@ html * {
     box-sizing: inherit;
     margin: 0px;
     padding: 0px;
+    word-wrap: break-word;
 }
 
 *,
@@ -40,11 +41,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* main classes */
 body {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
     background: var(--primary);
-}
-
-main {
-    min-height: 90vh;
+    min-height: 100vh
 }
 
 nav {
@@ -53,22 +54,22 @@ nav {
     justify-content: space-between;
     align-items: start;
     gap: 0.5rem;
-    padding: 0.4rem;
+    padding: 0.5rem 1rem;
 }
 
 .nav-group {
     display: flex;
     flex-flow: row-nowrap;
+    justify-content: center;
+    align-items: center;
     gap: 0.5rem;
 }
-
-header {}
 
 footer {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    padding: 0.4rem;
+    padding: 0 1rem;
 }
 
 a {
@@ -88,18 +89,51 @@ a:active {
 }
 
 li {
-    white-space: nowrap;
+    list-style-position: inside;
 }
 
 #recipes {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    flex-flow: row wrap;
+    padding: 0 1rem;
     gap: 1rem;
-    padding: 1rem;
 }
 
 #recipes article {
+    min-width: 400px;
+    flex: 1;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 1rem;
     padding: 1rem;
     border: 1px solid black;
+    border-radius: 5px;
+    background-color: var(--secondary);
+}
+
+.center {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#login, #register, #add-recipe {
+    max-width: 500px;
+    max-height: 600px;
+    border: 1px solid black;
     border-radius: 10px;
+    padding: 1rem;
+}
+
+#addrecipe-form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 1rem;
+}
+
+#addrecipe-form div {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
 }

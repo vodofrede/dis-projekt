@@ -1,37 +1,59 @@
+import flask
+import flask_login
 import model
-from flask import Blueprint, render_template
+from user import User
 
-recipe = Blueprint('recipe', __name__, url_prefix="/recipe")
+recipe = flask.Blueprint("recipe", __name__)
 
 
-# get all recipes, filtered or not
-@recipe.route("/")
-def getAll(count): # define and include type on param?
-    recipes = model.Recipe.selectAllRecipes()
-    return render_template('frontpage.html', title='Recipes', recipeList=recipes)
+# render add recipe site
+@recipe.route("/addrecipe", methods=["GET"])
+@flask_login.login_required
+def getAddRecipePage():
+    return flask.render_template(
+        "addrecipe.html", title="Add Recipe", user=flask_login.current_user
+    )
 
-# get all recipes, 
-@recipe.route("/")
-def getNRecipes(): # define and include type on param?
-    recipes = model.Recipe.getNRecipes()
-    return render_template('frontpage.html', title='Recipes', recipeList=recipes)
 
-# get recipe by id
-@recipe.route("/<int:id>")
-def getRecipe(id):
+# render add recipe site
+@recipe.route("/recipe/<int:id>", methods=["GET"])
+def getRecipePage(id):
     recipe = model.Recipe.getRecipeById(id)
-    return render_template('recipesite.html', title='Recipe', recipe=recipe)
-
-# search for recipes, based on ingredient filter (list of ingredients)
-# @recipe.route("/filter")
-# def filter(filter):
-#     recipes = getRecipesByFilter(filter)
-#     return render_template('frontpage.html', title='Search', recipeList=recipes)
-
-# search for recipe name, return list of hits
-# @recipe.route("/search")
-# def search(name):
-#     recipes = searchRecipes(name)
-#     return render_template('frontpage.html', title='Search', recipeList=recipes)
+    return flask.render_template(
+        "recipepage.html", title="Recipe", user=flask_login.current_user, recipe=recipe
+    )
 
 
+# add recipe
+@recipe.route("/addrecipe", methods=["POST"])
+@flask_login.login_required
+def createRecipe():
+    name = flask.request.form["name"]
+    category = flask.request.form["category"]
+    cuisine = flask.request.form["cuisine"]
+    ingredients = flask.request.form["ingredients"]
+    description = flask.request.form["description"]
+    method = flask.request.form["method"]
+    currentUser = User.get_user(flask_login.current_user.id).user_id
+    recipe = [name, category, cuisine, ingredients, description, method, currentUser]
+
+    recipeCreated = model.Recipe.addRecipe(recipe)
+    print(recipeCreated)
+
+    return flask.redirect(flask.url_for("app.front"), code=302)
+
+
+# delete recipe
+@recipe.route("/deleterecipe", methods=["POST"])
+@flask_login.login_required
+def deleteRecipe():
+    recipeId = flask.request.form["id"]
+    currentUserId = User.get_user(flask_login.current_user.id).user_id
+
+    dbRecipe = model.Recipe.getRecipeById(recipeId)
+
+    if dbRecipe.created_by == currentUserId:
+        model.Recipe.deleteRecipe(recipeId)
+        return flask.redirect(flask.url_for("app.front"), code=302)
+    else:
+        return flask.abort(401)

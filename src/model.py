@@ -1,81 +1,231 @@
+import datetime
+import os
+
+import flask_login
 import psycopg2
 
-# database models
+# initialize models
+con = psycopg2.connect(os.environ["APP_DB_URI"])
 
-con = psycopg2.connect("dbname=dis user=postgres")
+# initialize tables
+with open("schema/create.sql") as sql:
+    cur = con.cursor()
 
-class Model():
-    def __init__(self):
-        pass
+    cur.execute(sql.read())
 
-class Recipe(Model):
-    # recipe: 
-    # id, name, category, cuisine, **ingredients**, time, difficulty
+    con.commit()
+    cur.close()
+
+
+class Recipe:
+    id: int
+    name: str
+    category: str
+    cuisine: str
+    ingredients: str
+    description: str
+    method: str
+    created_by: int
+    created_by_username: str
+    created_at: datetime.datetime
 
     def __init__(self, recipe):
-        self.id = recipe[0]
+        self.rid = recipe[0]
         self.name = recipe[1]
         self.category = recipe[2]
         self.cuisine = recipe[3]
         self.ingredients = recipe[4]
+        self.description = recipe[5]
+        self.method = recipe[6]
+        self.created_by = recipe[7]
+        self.created_at = recipe[8]
 
-        super.__init__()    
+        user = User.by_user_id(self.created_by)
+        if user is not None:
+            self.created_by_username = user.id
+        else:
+            self.created_by_username = "System"
 
-    # get all recipes
+    def ingredient_list(self):
+        return self.ingredients.split(";")
+
+    def method_list(self):
+        return self.method.split(";")
+
+    def pretty_date(self):
+        return self.created_at.strftime("%d/%m-%Y")
+
     @staticmethod
-    def selectAllRecipes():
+    def get_all_recipes():
         cur = con.cursor()
         sql = """
-        SELECT * FROM Recipe
+        SELECT * FROM Recipes order by rid desc;
         """
         cur.execute(sql)
-        con.commit()
+        recipe_data = cur.fetchall()
+        recipes = [Recipe(data) for data in recipe_data]
+
         cur.close()
+
+        return recipes
 
     # get 'n' recipes in database
+
     @staticmethod
-    def selectNRecipes(amount, fromId):
+    def get_recipes(amount, fromId):
         cur = con.cursor()
         sql = """
-        SELECT * FROM Recipe where id > %s order by id limit %s
+        SELECT * FROM Recipes where rid > %s order by rid limit %s
         """
+
         cur.execute(sql, (fromId, amount))
-        con.commit()
+        recipes = cur.fetchall()
         cur.close()
+        return recipes
 
     # get recipe by id
+
     @staticmethod
     def getRecipeById(id):
         cur = con.cursor()
+
         sql = """
-        SELECT * FROM Recipe where id = %s
+        SELECT * FROM Recipes where rid = %s
         """
-        cur.execute(sql, (id))
+
+        cur.execute(sql, (id,))
+
+        recipe = Recipe(cur.fetchone()) if cur.rowcount > 0 else None
+        cur.close()
+        return recipe
+
+    # get recipe by id
+
+    def deleteRecipe(id):
+        cur = con.cursor()
+
+        sql = """
+        DELETE FROM Recipes where rid = %s
+        """
+
+        cur.execute(sql, (id,))
+
         con.commit()
         cur.close()
 
     # get recipe by id
+
     @staticmethod
-    def addRecipe(name, category, cuisine, ingredients):
+    def addRecipe(recipe):
         cur = con.cursor()
         sql = """
-        INSERT INTO Recipe(name, category, cuisine, ingredients) VALUES (%s, %s, %s, %s)
+        INSERT INTO Recipes(name, category, cuisine, ingredients, description, method, 
+        created_by) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
-        cur.execute(sql, (name, category, cuisine, ingredients))
+
+        cur.execute(
+            sql,
+            (
+                recipe[0],
+                recipe[1],
+                recipe[2],
+                recipe[3],
+                recipe[4],
+                recipe[5],
+                recipe[6],
+            ),
+        )
+
         con.commit()
         cur.close()
 
-class Ingredient(Model):
-    # ingredient: id, name, category
-    def __init__(self, ingredient):
-        self.id = ingredient[0]
-        self.name = ingredient[1]
-        self.category = ingredient[2]
 
-class User(Model):
-    # user: id, user_name, favorite_recipes, password
-    def __init__(self, user):
-        self.id = user[0]
-        self.user_name = user[1]
-        self.favorite_recipes = user[2]
-        self.password = user[3]
+class User(flask_login.UserMixin):
+    id: str
+    user_id: int
+    password: str
+
+    @staticmethod
+    def get_user(id):
+        """
+        Checks if a id is in the database and
+        returns the user if it is the case, otherwise it returns None
+        if the user does not exist.
+        """
+
+        cur = con.cursor()
+        sql = """
+        SELECT * FROM Users WHERE username = %s
+        """
+
+        cur.execute(sql, (id,))
+
+        # check if query returned unique result
+        user_data = cur.fetchone() if cur.rowcount > 0 else None
+        if user_data is None:
+            return None
+
+        user = User()
+        user.user_id = user_data[0]
+        user.id = user_data[1]
+        user.password = user_data[2]
+
+        cur.close()
+        return user
+
+    @staticmethod
+    def by_user_id(user_id):
+        """
+        Checks if a id is in the database and
+        returns the user if it is the case, otherwise it returns None
+        if the user does not exist.
+        """
+
+        cur = con.cursor()
+        sql = """
+        SELECT * FROM Users WHERE id = %s
+        """
+
+        cur.execute(sql, (user_id,))
+
+        # check if query returned unique result
+        user_data = cur.fetchone() if cur.rowcount > 0 else None
+        if user_data is None:
+            return None
+
+        user = User()
+        user.id = user_data[1]
+        user.password = user_data[2]
+
+        cur.close()
+        return user
+
+    @staticmethod
+    def register_user(id, password):
+        """
+        Register a new user. Don't do any checks, as we assume that this method won't
+        be called with an existing username. Always returns a user.
+        """
+
+        cur = con.cursor()
+        sql = """
+        INSERT INTO Users(username, password) VALUES (%s, %s)
+        """
+
+        cur.execute(
+            sql,
+            (
+                id,
+                password,
+            ),
+        )
+
+        con.commit()
+        cur.close()
+
+        user = User()
+        user.id = id
+        user.password = password
+
+        return user

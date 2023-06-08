@@ -1,3 +1,4 @@
 Flask >= 2
+Flask-Login == 0.6.2
 psycopg2 >= 2.9.6
 python-dotenv == 1.0.0

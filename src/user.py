@@ -1,30 +1,98 @@
-from flask import Blueprint, render_template
+import flask
+import flask_login
+from model import User
 
-user = Blueprint("user", __name__)
+# initialize login manager
+login_manager = flask_login.LoginManager()
 
-posts = [{}]
+@login_manager.user_loader
+def user_loader(username):
+    user = User.get_user(username)
+    if user is None:
+        return
+    
+    return user
 
+@login_manager.request_loader
+def request_loader(request):
+    username = request.form.get("username")
+    user = User.get_user(username)
+    if user is None:
+        return
 
-@user.route("/")
+    return user
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return 'Unauthorized', 401
+
+# routes
+blueprint = flask.Blueprint("user", __name__)
+
+@blueprint.route("/")
 def get(id):
     return
 
 
-@user.route("/about")
+@blueprint.route("/about")
 def about():
-    return render_template("about.html", title="About")
+    return flask.render_template("about.html", title="About")
 
 
-@user.route("/login", methods=["GET", "POST"])
-def login(id):
-    result = loginUser(id)
-    if result:
-        return render_template("frontpage.html", title="Home")
+@blueprint.route("/login", methods=["GET", "POST"])
+def login():
+    """
+    Show login page and login user
+    """
+    if flask.request.method == "GET":
+        return flask.render_template("login.html", title="Login")
+
+    username = flask.request.form["username"]
+    print(f"got username from login form: {username}")
+
+    # check if user exists
+    user = User.get_user(username)
+    if user is None:
+        return "unknown username"
+
+    print(f"{user.id}, {user.password}")
+
+    # check if password matches
+    if flask.request.form["password"] == user.password:
+        flask_login.login_user(user)
+        return flask.redirect(flask.url_for("app.front"))
     else:
-        return render_template("login.html", title="Error")
+        return "wrong password"
 
 
-@user.route("/logout")
-def logout(id):
-    logoutUser(id)
-    return render_template("login.html", title="Logout")
+@blueprint.route("/register", methods=["GET", "POST"])
+def register():
+    """
+    Show register user page and register a new user
+    """
+    # render template if GET
+    if flask.request.method == "GET":
+        return flask.render_template("register.html", title="Register")
+
+    username = flask.request.form["username"]
+    print(f"registering {username}")
+
+    # check if user exists
+    user = User.get_user(username)
+    if user is not None:
+        return "user already exists"
+
+    # register user in database
+    user = User.register_user(username, flask.request.form["password"])
+
+    # login the user
+    flask_login.login_user(user)
+
+    return flask.redirect(flask.url_for("app.front"))
+
+@blueprint.route("/logout")
+@flask_login.login_required
+def logout():
+    flask_login.logout_user()
+    return flask.redirect(flask.url_for("app.front"), code=302)
+

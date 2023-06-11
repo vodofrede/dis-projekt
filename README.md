@@ -6,7 +6,7 @@ Requires an installation and PATH-available version of Python 3+.
 
 Copy `.env.example` to `.env` and edit the file, assigning required variables (such as DB URI).
 
-To install requirements and compile the app:  
+To install requirements and run the app:  
 **Windows**: `.\start.bat`.  
 **Unix**: `./start.sh` (requires bash).
 
@@ -29,3 +29,4 @@ Logged in users can also delete existing recipes, but only the recipes they them
 or delete recipes without being logged in, they will recieve an unauthorization error.
 The user can click on the title of a recipe to view it by itself in full view.
 The user can always return to the front page by clicking the giant ReciPy logo in the top bar.
+Recipes keep track of the date of creation and who made it, for extra security - so that random users cannot delete eachothers recipes.

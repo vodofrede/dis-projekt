@@ -1,5 +1,11 @@
 # DIS Projekt
 
+## Group Members
+
+-   Frederik Palmø - gbs655
+-   Mads Nørregaard - gnz359
+-   Mathias Brams-Larsen - tnf474
+
 ## Installing / compiling
 
 Requires an installation and PATH-available version of Python 3+.

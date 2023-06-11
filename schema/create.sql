@@ -12,6 +12,6 @@ create table if not exists Recipes (
     ingredients text,
     description text,
     method text,
-    created_by int references Users(id),
+    created_by int references Users(id) default 0,
     created_at timestamp default current_timestamp
 );

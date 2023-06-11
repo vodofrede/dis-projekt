@@ -17,9 +17,13 @@ This will make a `.venv` folder and run the app inside it.
 The project was developed using a PostgreSQL database, and is not tested on e.g. MySQL or SQLite.
 If using default settings, create a new database using `psql` called `dis` with the username and password `postgres`, running on `localhost:5432`.
 
-`psql -U postgres -c "CREATE DATABASE dis OWNER postgres`
+1. Create the `dis` database: `psql -U postgres -c "CREATE DATABASE dis OWNER postgres"`
+2. Initialize the tables using `psql -U postgres -d dis -f schema/create.sql`
+3. The `dataset/recipes.csv` file can be imported to provide some example recipes. To import the data, use the following command from the project root directory:
 
-The `dataset/recipes.csv` file can be imported to provide some example recipes.
+```
+psql -U postgres -d dis -c "SET session_replication_role = 'replica'" -c "\copy Recipes(name,category,cuisine,ingredients,description,method) FROM 'dataset/recipes.csv' (FORMAT CSV, HEADER true);"
+```
 
 ## Interactivity
 
